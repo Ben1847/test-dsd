@@ -5,8 +5,12 @@
 // 3. Write init(): call getRepos inside try/catch and show a message if it fails.
 // 4. Add a JSDoc comment above every function.
 // 5. Call init() at the bottom of the file.
+
+// Global constants
+// Varaible decides whever the program uses the local file or not
 const USE_LOCAL_FILE = false;
-const USERNAME = "pixijs";
+// So the program gets repositories from this user
+const USERNAME = "Ben1847";
 
 /**
 * Fetches the public repositories of a GitHub user.
@@ -14,14 +18,14 @@ const USERNAME = "pixijs";
 * @returns {Promise<Object[]>} The repositories.
 */
 async function getRepos(username) {
-        const address = USE_LOCAL_FILE
-    ? "repos.json"
-    : `https://api.github.com/users/${username}/repos?per_page=100`;
-    const response = await fetch(address);
-    if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    const address = USE_LOCAL_FILE // local file (true or false)
+    ? "repos.json" // if it is true use local file
+    : `https://api.github.com/users/${username}/repos?per_page=100`; // If it is false use the github user
+    const response = await fetch(address); // contacts the links server and gets the repositories from the page
+    if (!response.ok) { // if its false and fails
+    throw new Error(`Request failed with status ${response.status}`); // Creates an error and stops the execution
     }
-    return response.json();
+    return response.json(); // Converts the response to json and returns it
 }
 
 /**
@@ -29,28 +33,28 @@ async function getRepos(username) {
  * @param {Object[]} repos - The repository objects.
  */
 async function showRepos(repos) {
-    const list = document.querySelector("#repos")
-    list.innerHTML = "";
-    if (repos.length === 0) {
-        list.textContent = "No public repositories found.";
-        return;
+    const list = document.querySelector("#repos") // Stores the list with the ID
+    list.innerHTML = ""; // Removes everything inside the list by setting it to nothing
+    if (repos.length === 0) { // Checks if there are no repositories
+        list.textContent = "No public repositories found."; // Shows this text on the HTML 
+        return; // Exits the function
     }
-    for (const repo of repos) {
-        const item = document.createElement("li")
-        const link = document.createElement("a")
-        link.href = repo.html_url;
-        link.textContent = repo.name;
-        item.append(link);
-        list.append(item);
+    for (const repo of repos) { // It is a loop going through all the repositories in the array
+        const item = document.createElement("li") // This creates a new HTML list element
+        const link = document.createElement("a") // This creates a new HTML link element
+        link.href = repo.html_url; // This makes the URL go into the link element
+        link.textContent = repo.name; // This makes the repo name the links clickable text
+        item.append(link); // Puts the link inside the list item
+        list.append(item); // Adds the list onto the webpage
     }
 }
 async function init(){
-    try{
-    showRepos(await getRepos(USERNAME))
-    } catch(error){
-        console.error(error)
-        document.querySelector("#repos").textContent= "Sorry, The repository could not be loaded";
+    try{ // try to run the code
+    showRepos(await getRepos(USERNAME)) // This runs the functions, gets the repositories and displays them on the page
+    } catch(error){ // catches the error
+        console.error(error) // Logs the error on the console
+        document.querySelector("#repos").textContent= "Sorry, The repository could not be loaded"; // Show a error message on the webpage
     }
 }
 
-init();
+init(); // Calls the function to run everything
